@@ -10,8 +10,7 @@ class GeolocatorService {
           permission == LocationPermission.whileInUse) {
         final position = await Geolocator.getCurrentPosition();
         return position;
-      } else if (permission == LocationPermission.deniedForever ||
-          permission == LocationPermission.denied) {
+      } else if (permission == LocationPermission.deniedForever) {
         return null;
       } else {
         await Geolocator.requestPermission();
