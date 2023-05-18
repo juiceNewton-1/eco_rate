@@ -10,7 +10,7 @@ class AppRoutes {
   static Map<String, Widget Function(BuildContext)> getRoutes(
           BuildContext context) =>
       {
-        _Paths.splash: (context) => const SplashScreen(),
-        _Paths.main: (context) => const MainScren()
+        Paths.splash: (context) => const SplashScreen(),
+        Paths.main: (context) => const MainScren()
       };
 }
