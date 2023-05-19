@@ -1,4 +1,4 @@
-import 'package:diplom/widgets/screens/main_screen.dart';
+import 'package:diplom/widgets/screens/main_screen/main_screen.dart';
 import 'package:diplom/widgets/screens/splash_screen.dart';
 import 'package:flutter/material.dart' show Widget, BuildContext;
 

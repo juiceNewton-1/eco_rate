@@ -3,6 +3,9 @@ import 'dart:developer';
 import 'package:geolocator/geolocator.dart';
 
 class GeolocatorService {
+  Stream<Position> get userPositionStream =>
+      Geolocator.getPositionStream().asBroadcastStream();
+
   Future<Position?> getUserPosition() async {
     final permission = await Geolocator.checkPermission();
     try {
