@@ -1,13 +1,15 @@
 import 'dart:async';
-import 'dart:developer';
-
+import 'dart:math';
 import 'package:diplom/constants/api_keys.dart';
+import 'package:diplom/constants/enums.dart';
+import 'package:diplom/constants/pdk.dart';
 import 'package:diplom/models/air_pollution_model.dart';
 import 'package:diplom/models/user_position_model.dart';
 import 'package:diplom/services/api_service.dart';
 import 'package:diplom/services/geolocator_service.dart';
 import 'package:diplom/services/noise_meter_service.dart';
 import 'package:flutter/foundation.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:noise_meter/noise_meter.dart';
 
 class LogicController extends ChangeNotifier {
@@ -17,6 +19,9 @@ class LogicController extends ChangeNotifier {
 
   Stream<NoiseReading> get noiseStream =>
       _noiseMeterService.getNoiseStream().asBroadcastStream();
+
+  Stream<Position> get userPositionStream =>
+      _geolocatorService.userPositionStream;
 
   Future<double> getMeanNoiseValueFromLimit() async {
     final limitNoiseValues = (await noiseStream.take(10).toList())
@@ -45,14 +50,16 @@ class LogicController extends ChangeNotifier {
   }
 
   Future<AirPollutionModel?> getAirPollutants(double lat, double lon) async {
+    final date = DateTime.now().toIso8601String().substring(0, 10);
+
     try {
       final json = await _apiService.getDataFromUrl(
           url:
-              'https://air-quality-api.open-meteo.com/v1/air-quality?latitude=$lat&longitude=$lon&hourly=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone&timezone=Europe%2FMoscow&start_date=2023-05-16&end_date=2023-05-16');
+              'https://air-quality-api.open-meteo.com/v1/air-quality?latitude=$lat&longitude=$lon&hourly=pm10,pm2_5,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone&timezone=Europe%2FMoscow&start_date=$date&end_date=$date');
       final airPollutionModel = AirPollutionModel.fromJson(json['hourly']);
       return airPollutionModel;
     } catch (e) {
-      log('$e');
+      print(e);
     }
   }
 
@@ -70,8 +77,54 @@ class LogicController extends ChangeNotifier {
         return null;
       }
     } catch (e) {
-      log('LogicController || $e');
+      print(e);
       return null;
     }
+  }
+
+  double calculateEcoRate(double noiseValue, int treesQuantity,
+      AirPollutionModel airPollutionModel, UserAreaType userAreaType) {
+    final dateTime = DateTime.now().toIso8601String().substring(0, 13);
+    print(dateTime);
+    final currentTimeIndex = airPollutionModel.time
+        .indexWhere((element) => element.startsWith(dateTime));
+
+    final coValue = airPollutionModel.co[currentTimeIndex] ?? 0;
+    final no2Value = airPollutionModel.no2[currentTimeIndex] ?? 0;
+    final so2Value = airPollutionModel.so2[currentTimeIndex] ?? 0;
+    final o3Value = airPollutionModel.o3[currentTimeIndex] ?? 0;
+    final pm25Value = airPollutionModel.pm25[currentTimeIndex] ?? 0;
+    final pm10Value = airPollutionModel.pm10[currentTimeIndex] ?? 0;
+    final List<double> airPollutantsConcentration = [
+      coValue,
+      no2Value,
+      so2Value,
+      o3Value,
+      pm25Value,
+      pm10Value
+    ];
+
+    double airPollutionValue = 0;
+    double noisePollutionValue = 0;
+    final pollutantsPdk = PDK.pollutantsMRPDK.values.toList();
+    for (var i = 0; i < airPollutantsConcentration.length; i++) {
+      airPollutionValue +=
+          (airPollutantsConcentration[i] / 1000) / pollutantsPdk[i];
+    }
+
+    noisePollutionValue = noiseValue / getNoisePDK(userAreaType);
+
+    return (pow((airPollutionValue + 1), 0.4) +
+                pow((noisePollutionValue + 1), 0.4) +
+                pow((treesQuantity / 100), 0.2))
+            .toDouble() -
+        1;
+  }
+
+  int getNoisePDK(UserAreaType userAreaType) {
+    if (DateTime.now().hour < 7) {
+      return PDK.nightNoisePDK[userAreaType]!;
+    }
+    return PDK.dayNoisePDK[userAreaType]!;
   }
 }
