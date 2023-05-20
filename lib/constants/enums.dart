@@ -6,3 +6,12 @@ enum AirPollutants {
   nitrogen_dioxide,
   ozone
 }
+
+enum UserAreaType {
+  residential,
+  industrial,
+  recreation,
+  agricultural,
+  reserve,
+}
+

@@ -1,3 +1,4 @@
+import 'package:diplom/widgets/screens/eco_rate_result_screen.dart';
 import 'package:diplom/widgets/screens/main_screen/main_screen.dart';
 import 'package:diplom/widgets/screens/splash_screen.dart';
 import 'package:flutter/material.dart' show Widget, BuildContext;
@@ -11,6 +12,7 @@ class AppRoutes {
           BuildContext context) =>
       {
         Paths.splash: (context) => const SplashScreen(),
-        Paths.main: (context) => const MainScren()
+        Paths.main: (context) => const MainScren(),
+        Paths.ecoRateResult: (context) => const EcoRateResultScreen()
       };
 }
