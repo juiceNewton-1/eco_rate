@@ -36,11 +36,13 @@ class _RateScreenState extends State<RateScreen> {
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         airPollutionModel = snapshot.data!['airPollutionModel'];
-                        print(airPollutionModel);
+
                         return const Text(
-                            'данные по загрязнению воздуха получены');
+                          '✅ Данные по загрязнению воздуха получены',
+                          textAlign: TextAlign.center,
+                        );
                       } else {
-                        return const CircularProgressIndicator();
+                        return const Text('Получение данных по загрязнению...');
                       }
                     },
                   ),
@@ -50,12 +52,14 @@ class _RateScreenState extends State<RateScreen> {
                       if (snapshot.hasData) {
                         noiseValue = snapshot.data;
                         print(noiseValue);
-                        return Text('Уровень шума: ${noiseValue!.ceil()} dB');
+                        return Text(
+                            '✅ Уровень шума получен: ${noiseValue!.ceil()} dB');
                       } else {
-                        return const CircularProgressIndicator();
+                        return const Text('Получение уровня шума...');
                       }
                     },
                   ),
+                  const SizedBox(height: 20),
                   const Text('Тип территории'),
                   const SizedBox(height: 10),
                   DropdownButtonFormField(
@@ -82,18 +86,21 @@ class _RateScreenState extends State<RateScreen> {
                   ),
                   const SizedBox(height: 10),
                   const Text(
-                    'Обеспеченность зелеными насаждениями',
+                    'Обеспеченность зелеными насаждениями, %',
                     textAlign: TextAlign.center,
                   ),
-                  TextFormField(
-                    keyboardType: TextInputType.number,
-                    onFieldSubmitted: (value) {
-                      if (value != treesQuantity) {
-                        setState(() {
-                          treesQuantity = value;
-                        });
-                      }
-                    },
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 40),
+                    child: TextFormField(
+                      keyboardType: TextInputType.number,
+                      onFieldSubmitted: (value) {
+                        if (value != treesQuantity) {
+                          setState(() {
+                            treesQuantity = value;
+                          });
+                        }
+                      },
+                    ),
                   ),
                   ElevatedButton(
                     onPressed: () {
