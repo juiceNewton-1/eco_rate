@@ -1,9 +1,15 @@
 import 'package:diplom/controllers/logic_controller.dart';
 import 'package:diplom/routes/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import "package:provider/provider.dart";
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   runApp(const MyApp());
 }
 
@@ -18,7 +24,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<LogicController>(
-            create: (_) => LogicController())
+          create: (_) => LogicController(),
+        )
       ],
       child: MaterialApp(
         theme: ThemeData(useMaterial3: true),
