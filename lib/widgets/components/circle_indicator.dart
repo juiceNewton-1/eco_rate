@@ -34,7 +34,9 @@ class CircleIndicator extends CustomPainter {
 
     final progressAngle = 2 *
         3.14 *
-        (fillValue / (divisionValue ?? 1)); // Рассчитываем угол прогресса
+        (divisionValue != null
+            ? fillValue / divisionValue!
+            : fillValue); // Рассчитываем угол прогресса
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
       -3.14 / 2, // Начинаем рисовать с верхней точки
