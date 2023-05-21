@@ -85,16 +85,16 @@ class LogicController extends ChangeNotifier {
   double calculateEcoRate(double noiseValue, int treesQuantity,
       AirPollutionModel airPollutionModel, UserAreaType userAreaType) {
     final dateTime = DateTime.now().toIso8601String().substring(0, 13);
-    print(dateTime);
     final currentTimeIndex = airPollutionModel.time
         .indexWhere((element) => element.startsWith(dateTime));
 
-    final coValue = airPollutionModel.co[currentTimeIndex] ?? 0;
-    final no2Value = airPollutionModel.no2[currentTimeIndex] ?? 0;
-    final so2Value = airPollutionModel.so2[currentTimeIndex] ?? 0;
-    final o3Value = airPollutionModel.o3[currentTimeIndex] ?? 0;
-    final pm25Value = airPollutionModel.pm25[currentTimeIndex] ?? 0;
-    final pm10Value = airPollutionModel.pm10[currentTimeIndex] ?? 0;
+    final coValue = (airPollutionModel.co[currentTimeIndex] ?? 0) / 1000;
+    final no2Value = (airPollutionModel.no2[currentTimeIndex] ?? 0) / 1000;
+    final so2Value = (airPollutionModel.so2[currentTimeIndex] ?? 0) / 1000;
+    final o3Value = (airPollutionModel.o3[currentTimeIndex] ?? 0) / 1000;
+    final pm25Value = (airPollutionModel.pm25[currentTimeIndex] ?? 0) / 1000;
+    final pm10Value = (airPollutionModel.pm10[currentTimeIndex] ?? 0) / 1000;
+
     final List<double> airPollutantsConcentration = [
       coValue,
       no2Value,
@@ -104,21 +104,20 @@ class LogicController extends ChangeNotifier {
       pm10Value
     ];
 
-    double airPollutionValue = 0;
     double noisePollutionValue = 0;
     final pollutantsPdk = PDK.pollutantsMRPDK.values.toList();
-    for (var i = 0; i < airPollutantsConcentration.length; i++) {
-      airPollutionValue +=
-          (airPollutantsConcentration[i] / 1000) / pollutantsPdk[i];
-    }
+    final PZA = List.generate(
+            airPollutantsConcentration.length,
+            (index) => pow(
+                airPollutantsConcentration[index] / pollutantsPdk[index],
+                index == 0 ? 1.5 : 1.3))
+        .reduce((value, element) => value + element);
 
-    noisePollutionValue = noiseValue / getNoisePDK(userAreaType);
-
-    return (pow((airPollutionValue + 1), 0.4) +
-                pow((noisePollutionValue + 1), 0.4) +
-                pow((treesQuantity / 100), 0.2))
-            .toDouble() -
-        1;
+    final noisePollutionPDK = getNoisePDK(userAreaType);
+    final air = (14 - PZA) / 14;
+    final noise = (noisePollutionPDK - noiseValue) / noisePollutionPDK;
+    final trees = treesQuantity / 100;
+    return (air * 0.5) + (noise * 0.3) + (trees * 0.2);
   }
 
   int getNoisePDK(UserAreaType userAreaType) {
