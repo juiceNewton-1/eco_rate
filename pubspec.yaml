@@ -40,8 +40,9 @@ dependencies:
   connectivity_plus: ^4.0.0
   noise_meter: ^3.2.0
   pdf: ^3.10.1
-  http: ^0.13.6
   geolocator: ^9.0.2
+  fl_chart: ^0.62.0
+  dio: ^5.1.2
 
 dev_dependencies:
   flutter_test:
