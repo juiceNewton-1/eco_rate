@@ -1,8 +1,4 @@
-import 'dart:async' show StreamSubscription;
-
 import 'package:diplom/controllers/logic_controller.dart';
-import 'package:diplom/models/air_pollution_model.dart';
-import 'package:diplom/models/user_position_model.dart';
 import 'package:diplom/widgets/components/circle_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

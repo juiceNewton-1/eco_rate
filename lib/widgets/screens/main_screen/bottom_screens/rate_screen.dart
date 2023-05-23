@@ -109,13 +109,16 @@ class _RateScreenState extends State<RateScreen> {
                           noiseValue != null) {
                         final treesQuantityInt = int.parse(treesQuantity!);
                         Navigator.of(context).pop();
+                        final ecoRateModel = _logicController.calculateEcoRate(
+                            noiseValue!,
+                            treesQuantityInt,
+                            airPollutionModel!,
+                            userAreaType);
                         Navigator.of(context).pushNamed(
                           Paths.ecoRateResult,
                           arguments: {
                             'airPollutionModel': airPollutionModel,
-                            'treesQuantity': treesQuantityInt,
-                            'noiseValue': noiseValue,
-                            'userAreaType': userAreaType
+                            'ecoRateModel': ecoRateModel,
                           },
                         );
                       }
