@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:geolocator/geolocator.dart';
 
 class GeolocatorService {
+  static final instance = GeolocatorService._();
+  GeolocatorService._();
   Stream<Position> get userPositionStream =>
       Geolocator.getPositionStream().asBroadcastStream();
 
