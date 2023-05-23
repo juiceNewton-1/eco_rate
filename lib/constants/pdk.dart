@@ -1,13 +1,13 @@
 import 'package:diplom/constants/enums.dart';
 
 class PDK {
-  static const pollutantsMRPDK = <String, double>{
-    'co': 5.0,
-    'no2': 0.085,
-    'so2': 0.4,
-    'o3': 0.16,
-    'pm2_5': 0.16,
-    'pm10': 0.3
+  static const pollutantsPDKSS = <AirPollutants, double>{
+    AirPollutants.carbon_monoxide: 3.0,
+    AirPollutants.nitrogen_dioxide: 0.1,
+    AirPollutants.sulphur_dioxide: 0.05,
+    AirPollutants.ozone: 0.1,
+    AirPollutants.pm2_5: 0.035,
+    AirPollutants.pm10: 0.06
   };
 
   static const nightNoisePDK = <UserAreaType, int>{
@@ -25,6 +25,4 @@ class PDK {
     UserAreaType.agricultural: 50,
     UserAreaType.reserve: 35
   };
-
-
 }
